@@ -1,0 +1,7 @@
+{
+  "name": "exif-test",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
