@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import exifr from 'exifr';
+import { Camera, CameraResultType } from '@capacitor/camera';
 
-import { Plugins, CameraResultType } from '@capacitor/core';
-
-const { Camera } = Plugins;
 
 const options = {
   ifd1: false,
