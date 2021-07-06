@@ -27,9 +27,14 @@ toString(o: Object): string {
    });
  }
 ```
-
+## EXIF Comparison Android
 Using Android 10 on a Note 9 device the fix was tested by capturing the image and saving the file. The JSON object for Exif data was compared. On the left is the Exif data from the camera and on the right is the exif data that was parsed from the saved file.
 
 ![Diff of Exif data Android](diff-compare-android.png)
 
 Each element in the exif data is present from camera and from the saved file (differences are in how the properties are interpreted.
+
+## EXIF Comparison iOS
+Using an iPhone 12 Max with iOS version 14.6 a comparison was done by capturing the image and saving the file. The JSON object for Exif data was compared. On the left is the Exif data from the camera and on the right is the exif data that was parsed from the saved file.
+
+![Diff of Exif data iOS](diff-compare-ios.png)
