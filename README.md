@@ -51,3 +51,6 @@ When using the Camera it is important that you do not set the option `saveToGall
 
 Your application should then pass the photo and geolocation information to your backend API for processing (you could update the EXIF data on the backend to include this).
 
+### Modifying EXIF data
+You can modify EXIF data using piexifjs. CameraService provides a method process which takes the image from the camera, the GPS location and produces a image that contains the EXIF data containing the location.
+

@@ -1,14 +1,8 @@
 import { Component } from '@angular/core';
 import exifr from 'exifr';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { Geolocation } from '@capacitor/geolocation';
-
-const options = {
-  ifd1: false,
-  exif: true,
-  interop: false,
-  gps: true,
-};
+import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
+import { Geolocation, Position } from '@capacitor/geolocation';
+import { CameraService } from '../camera.service';
 
 @Component({
   selector: 'app-home',
@@ -17,55 +11,53 @@ const options = {
 })
 export class HomePage {
   exifText: string;
+  imgsrc: string;
 
-  constructor() {
+  constructor(private cameraService: CameraService) {
   }
 
   async takePicture() {
     console.log('take');
     const coordinates = await Geolocation.getCurrentPosition();
-    
+
     const image = await Camera.getPhoto({
       quality: 90,
       allowEditing: false,
       source: CameraSource.Camera,
       resultType: CameraResultType.Uri
     });
-    
+
     console.log('Location', coordinates);
 
     console.log('exif in image', this.toString(image.exif));
-    this.exifText = this.toString(coordinates) + " " + this.toString(image.exif);
+    this.exifText = `${this.toString(coordinates)} ${this.toString(image.exif)}`;
 
-    fetch(image.webPath).then((resp) => resp.arrayBuffer()).then(async (ab) => {
-      console.log(ab);
+    const src: string = await this.cameraService.process(image, coordinates);
+    this.imgsrc = src;
 
-      const exif = await exifr.parse(ab, options);
-      console.log('exif in file', this.toString(exif)); 
-    });
+    const response: Response = await fetch(src);
+    const exif = await exifr.parse(await response.arrayBuffer());
+    console.log('exif in file', this.toString(exif));
+    this.exifText = this.toString(exif);
   }
 
   async selectPicture() {
     console.log('select');
-    const image = await Camera.getPhoto({
+    const image: Photo = await Camera.getPhoto({
       quality: 90,
       allowEditing: false,
       source: CameraSource.Photos,
       resultType: CameraResultType.Uri
     });
 
-    console.log('exif in image', this.toString(image.exif));   
-    
-    fetch(image.webPath).then((resp) => resp.arrayBuffer()).then(async (ab) => {
-      console.log(ab);
-
-      const exif = await exifr.parse(ab, options);
-      console.log('exif in file', this.toString(exif)); 
-      this.exifText = this.toString(exif);
-    });
+    const response: Response = await fetch(image.webPath);
+    const exif = await exifr.parse(await response.arrayBuffer());
+    console.log('exif in file', this.toString(exif));
+    this.exifText = this.toString(exif);
   }
 
-  toString(o: Object): string {
+  toString(o: any): string {
+    if (o === undefined) {return undefined;}
     return JSON.stringify(o, Object.keys(o).sort(), 4);
   }
 
